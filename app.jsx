@@ -1216,8 +1216,8 @@ function DashboardPage({ clients, projects, onGoToClient }) {
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function BrandBoostStudio() {
-  const [authed,       setAuthed]       = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState("");
+  const [authed,       setAuthed]       = useState(() => !!localStorage.getItem("bbs_user"));
+  const [loggedInUser, setLoggedInUser] = useState(() => localStorage.getItem("bbs_user") || "");
   const [loginF,       setLoginF]       = useState({ user: "", pass: "" });
   const [loginErr,     setLoginErr]     = useState("");
   const [page,         setPage]         = useState("dashboard");
@@ -1239,8 +1239,10 @@ export default function BrandBoostStudio() {
   const doLogin = () => {
     const validUsers = ["abubakar", "saad"];
     if (validUsers.includes(loginF.user.toLowerCase().trim()) && loginF.pass === "brandboost360") {
+      const name = loginF.user.charAt(0).toUpperCase() + loginF.user.slice(1).toLowerCase();
+      localStorage.setItem("bbs_user", name);
       setAuthed(true);
-      setLoggedInUser(loginF.user.charAt(0).toUpperCase() + loginF.user.slice(1).toLowerCase());
+      setLoggedInUser(name);
       setLoginF(p => ({ ...p }));
     } else setLoginErr("Invalid credentials.");
   };
@@ -1307,7 +1309,7 @@ export default function BrandBoostStudio() {
         {/* Footer */}
         <div style={{ padding: "14px 18px", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
           <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, marginBottom: 6 }}>Signed in as <b style={{ color: "rgba(255,255,255,0.55)" }}>{loggedInUser}</b></div>
-          <div onClick={() => setAuthed(false)} style={{ color: "#FCA5A5", fontSize: 12, cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}>⬅ Sign out</div>
+          <div onClick={() => { localStorage.removeItem("bbs_user"); setAuthed(false); }} style={{ color: "#FCA5A5", fontSize: 12, cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}>⬅ Sign out</div>
         </div>
       </div>
 
